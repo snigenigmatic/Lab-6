@@ -1,8 +1,17 @@
 def sanitize_string(data):
     """
     Removes special characters and trims the input.
-    Assumes data is a non-empty string.
+    Handles None and non-string inputs by converting to string or returning empty string.
     """
+    if data is None:
+        return ""
+    if not isinstance(data, str):
+        # convert other types (numbers, objects) to string safely
+        try:
+            data = str(data)
+        except Exception:
+            return ""
+
     data = data.strip()
     for ch in ['!', '@', '#', '$', '%']:
         data = data.replace(ch, '')
@@ -11,16 +20,46 @@ def sanitize_string(data):
 def parse_int_list(csv_string):
     """
     Parses a CSV string of integers into a list of ints.
-    Assumes valid comma-separated integer input.
+    Handles None, empty strings and ignores non-integer tokens.
     """
+    if csv_string is None:
+        return []
+    if not isinstance(csv_string, str):
+        try:
+            csv_string = str(csv_string)
+        except Exception:
+            return []
+
+    csv_string = csv_string.strip()
+    if csv_string == "":
+        return []
+
     parts = csv_string.split(',')
-    return [int(p) for p in parts]
+    ints = []
+    for p in parts:
+        p = p.strip()
+        if p == "":
+            continue
+        try:
+            ints.append(int(p))
+        except Exception:
+            # skip invalid integer tokens
+            continue
+    return ints
 
 def reverse_words(sentence):
     """
     Reverses each word in a sentence.
-    Assumes sentence is non-empty and contains no punctuation.
+    Handles None and non-string inputs by converting to string or returning empty string.
     """
+    if sentence is None:
+        return ""
+    if not isinstance(sentence, str):
+        try:
+            sentence = str(sentence)
+        except Exception:
+            return ""
+
     words = sentence.split()
     reversed_words = [w[::-1] for w in words]
     return ' '.join(reversed_words)
